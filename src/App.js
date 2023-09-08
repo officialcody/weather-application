@@ -4,6 +4,9 @@ import {
   REACT_APP_WEATHER_API_KEY,
   REACT_APP_WEATHER_API_URL,
 } from "../env.config.js";
+import { Dimmer, Loader } from "semantic-ui-react";
+import Weather from "./Weather.jsx";
+import "./App.css";
 
 const App = () => {
   const [latitude, setLatitude] = useState("30.1718506");
@@ -15,8 +18,8 @@ const App = () => {
       setLatitude(position.coords.latitude);
       setLongitude(position.coords.longitude);
     });
-    const completeURL = `${REACT_APP_WEATHER_API_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${REACT_APP_WEATHER_API_KEY}`;
-    await fetch(completeURL)
+    const weatherAPIURL = `${REACT_APP_WEATHER_API_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${REACT_APP_WEATHER_API_KEY}`;
+    await fetch(weatherAPIURL)
       .then((res) => res.json())
       .then((result) => {
         setData(result);
@@ -28,7 +31,19 @@ const App = () => {
     fetchDataFromApi();
   }, [latitude, longitude]);
 
-  return <div>Weather Application</div>;
+  return (
+    <div className="App">
+      {typeof data.main !== "undefined" ? (
+        <Weather weatherData={data} />
+      ) : (
+        <div>
+          <Dimmer active>
+            <Loader>Loading..</Loader>
+          </Dimmer>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default App;
